@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sciar Tips · My tips</title>
+<style>
+  :root{--ink:#1a1a1a;--muted:#555;--line:#d9d9d9;--bg:#fafaf7;--card:#fff;--accent:#0b5d4b;--warn:#8a4b00;--late:#e8b04a}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:18px;line-height:1.5;color:var(--ink);background:var(--bg)}
+  header{background:var(--accent);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  header h1{font-size:20px;margin:0}
+  header small{display:block;font-size:14px;opacity:.9}
+  .lang button{font-size:16px;padding:8px 12px;border:2px solid #fff;background:transparent;color:#fff;border-radius:6px;min-width:48px}
+  .lang button[aria-pressed="true"]{background:#fff;color:var(--accent);font-weight:700}
+  main{max-width:640px;margin:0 auto;padding:12px}
+  .note{background:#fff7e6;border-left:4px solid var(--warn);padding:10px 12px;font-size:15px;margin:8px 0 14px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin:0 0 14px}
+  h2{font-size:19px;margin:0 0 8px}
+  .big{font-size:40px;font-weight:800;line-height:1.1;margin:4px 0}
+  .src{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:var(--muted);background:#f3f3f0;padding:6px 8px;border-radius:6px;margin-top:10px;word-break:break-word}
+  .tag{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 6px;border-radius:4px;background:#e6f0ed;color:var(--accent);margin-bottom:6px}
+  .tag.inf{background:#fdeedd;color:var(--warn)}
+  table{width:100%;border-collapse:collapse;font-size:16px}
+  td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left}
+  td.n,th.n{text-align:right}
+  #groups{font-size:14px}
+  #groups th{font-size:13px}
+  .bars{margin-top:8px}
+  .row{display:grid;grid-template-columns:44px 1fr 64px;align-items:center;gap:6px;font-size:14px;margin:3px 0}
+  .bar{height:18px;display:flex;background:#eee;border-radius:3px;overflow:hidden}
+  .bar span{display:block;height:100%}
+  .b-paid{background:var(--accent)}
+  .b-late{background:var(--late)}
+  .key{font-size:14px;color:var(--muted);margin-top:6px}
+  .key i{display:inline-block;width:12px;height:12px;vertical-align:middle;margin-right:4px}
+  label{display:block;font-weight:600;margin:10px 0 4px}
+  select,textarea,button.main{font:inherit;width:100%;padding:10px;border:2px solid #999;border-radius:8px}
+  textarea{min-height:110px}
+  .check{display:flex;gap:10px;align-items:flex-start;font-weight:400}
+  .check input{width:24px;height:24px;flex:none;margin-top:2px}
+  button.main{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700;margin-top:12px;min-height:52px}
+  .mine{list-style:none;padding:0;margin:10px 0 0}
+  .mine li{border:1px solid var(--line);border-radius:8px;padding:10px;margin:8px 0;font-size:16px}
+  .mine .meta{font-size:13px;color:var(--muted)}
+  .link{background:none;border:none;color:var(--accent);text-decoration:underline;font:inherit;padding:0;cursor:pointer}
+  footer{font-size:14px;color:var(--muted);text-align:center;padding:10px 12px 30px}
+  footer a{color:var(--accent)}
+  :focus-visible{outline:3px solid #f0a500;outline-offset:2px}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1 data-t="title">My tips</h1>
+    <small data-t="signedin">Signed in as Rafael (staff S12) · demo</small>
+  </div>
+  <div class="lang" role="group" aria-label="Language / Idioma">
+    <button id="btn-en" aria-pressed="true" onclick="setLang('en')">EN</button>
+    <button id="btn-pt" aria-pressed="false" onclick="setLang('pt')">PT</button>
+  </div>
+</header>
+
+<main>
+  <p class="note" data-t="demo">Demo alpha. Fictional pilot data (Halloran's, 14 Aug to 5 Nov 2028). Every figure is calculated in your browser from the pilot data files named under it.</p>
+  <p class="note" id="pt-note" hidden>Texto em português escrito com ajuda de IA. Precisa de revisão por um falante nativo antes de uso real.</p>
+  <div id="err" class="note" hidden></div>
+
+  <section aria-labelledby="h-last">
+    <span class="tag" data-t="observed">Observed</span>
+    <h2 id="h-last" data-t="h_last">Your last payout</h2>
+    <div class="big" id="last-pay">…</div>
+    <div id="last-line"></div>
+    <div class="src" id="src-last"></div>
+  </section>
+
+  <section aria-labelledby="h-hidden">
+    <span class="tag" data-t="observed">Observed</span>
+    <h2 id="h-hidden" data-t="h_hidden">Hours that earned you no tips</h2>
+    <div class="big" id="late-pct">…</div>
+    <div id="late-line"></div>
+    <div id="since-line" style="margin-top:8px"></div>
+    <div class="src" id="src-hidden"></div>
+  </section>
+
+  <section aria-labelledby="h-weeks">
+    <span class="tag" data-t="observed">Observed</span>
+    <h2 id="h-weeks" data-t="h_weeks">Your hours, week by week</h2>
+    <div class="bars" id="bars"></div>
+    <div class="key"><i class="b-paid"></i><span data-t="k_paid">hours that earn points</span> &nbsp; <i class="b-late"></i><span data-t="k_late">hours after 23:00 (no points)</span></div>
+    <table style="margin-top:12px" id="cmp"></table>
+    <div class="src" id="src-weeks"></div>
+  </section>
+
+  <section aria-labelledby="h-how">
+    <span class="tag" data-t="observed">Observed</span>
+    <h2 id="h-how" data-t="h_how">How your pay was worked out</h2>
+    <div id="how"></div>
+    <div class="src" id="src-how"></div>
+  </section>
+
+  <section aria-labelledby="h-whatif">
+    <span class="tag inf" data-t="inferred">Inferred</span>
+    <h2 id="h-whatif" data-t="h_whatif">What if every hour earned points?</h2>
+    <div id="whatif"></div>
+    <div class="src" id="src-whatif"></div>
+  </section>
+
+  <section aria-labelledby="h-groups">
+    <span class="tag" data-t="observed">Observed</span>
+    <h2 id="h-groups" data-t="h_groups">Teams compared (groups of 3 or more only)</h2>
+    <table id="groups"></table>
+    <p class="key" data-t="groups_note">Roles with only 1 or 2 people (floor manager, bar, kitchen porter) are never shown alone, because that would identify them. Chefs are not shown separately either: subtracting them from Kitchen would reveal the kitchen porters.</p>
+    <div class="src" id="src-groups"></div>
+  </section>
+
+  <section aria-labelledby="h-sc">
+    <span class="tag" data-t="observed">Observed</span>
+    <h2 id="h-sc" data-t="h_sc">Service charge: not in your tips</h2>
+    <div class="big" id="sc-total">…</div>
+    <div id="sc-line"></div>
+    <div class="src" id="src-sc"></div>
+  </section>
+
+  <section aria-labelledby="h-concern" id="concern">
+    <h2 id="h-concern" data-t="h_concern">Raise a concern</h2>
+    <p data-t="who_sees"><strong>Who reads this:</strong> Sciar's staff-support team, not your employer. Your name is hidden unless you choose to share it. Halloran's only sees a topic (never a name or your words) once 3 or more people raise the same topic.</p>
+    <p class="note" data-t="simulated">Simulated: in this demo your concern is saved only on this phone (browser storage). Nothing is sent anywhere.</p>
+    <form id="cform">
+      <label for="topic" data-t="l_topic">What is it about?</label>
+      <select id="topic" required>
+        <option value="late" data-t="o_late">Hours after 23:00 earn nothing</option>
+        <option value="calc" data-t="o_calc">I can't see how my tips are worked out</option>
+        <option value="share" data-t="o_share">The split between roles</option>
+        <option value="sc" data-t="o_sc">Service charge</option>
+        <option value="other" data-t="o_other">Something else</option>
+      </select>
+      <label for="msg" data-t="l_msg">Tell us in your own words (any language)</label>
+      <textarea id="msg" maxlength="1000"></textarea>
+      <label class="check"><input type="checkbox" id="anon" checked> <span data-t="l_anon">Keep my name hidden (recommended)</span></label>
+      <button class="main" type="submit" data-t="b_send">Send concern</button>
+    </form>
+    <h2 style="margin-top:18px" data-t="h_mine">Your concerns</h2>
+    <ul class="mine" id="mine"></ul>
+  </section>
+</main>
+
+<footer>
+  <p data-t="foot">Data: <a href="data/payouts.csv">data/payouts.csv</a> and <a href="data/takings.csv">data/takings.csv</a> (observed pilot data). Calculations run in this page; view source to check them.</p>
+  <p><a href="index.html" data-t="home">About Sciar Tips</a></p>
+</footer>
+
+<script>
+const ME = 'S12';
+let lang = 'en', D = null;
+
+const T = {
+ en:{title:'My tips',signedin:'Signed in as Rafael (staff S12) · demo',demo:'Demo alpha. Fictional pilot data (Halloran’s, 14 Aug to 5 Nov 2028). Every figure is calculated in your browser from the pilot data files named under it.',
+  observed:'Observed',inferred:'Inferred',h_last:'Your last payout',h_hidden:'Hours that earned you no tips',h_weeks:'Your hours, week by week',k_paid:'hours that earn points',k_late:'hours after 23:00 (no points)',
+  h_how:'How your pay was worked out',h_whatif:'What if every hour earned points?',h_groups:'Teams compared (groups of 3 or more only)',groups_note:'Roles with only 1 or 2 people (floor manager, bar, kitchen porter) are never shown alone, because that would identify them. Chefs are not shown separately either: subtracting them from Kitchen would reveal the kitchen porters.',
+  h_sc:'Service charge: not in your tips',h_concern:'Raise a concern',who_sees:'<strong>Who reads this:</strong> Sciar’s staff-support team, not your employer. Your name is hidden unless you choose to share it. Halloran’s only sees a topic (never a name or your words) once 3 or more people raise the same topic.',
+  simulated:'Simulated: in this demo your concern is saved only on this phone (browser storage). Nothing is sent anywhere.',l_topic:'What is it about?',o_late:'Hours after 23:00 earn nothing',o_calc:'I can’t see how my tips are worked out',o_share:'The split between roles',o_sc:'Service charge',o_other:'Something else',
+  l_msg:'Tell us in your own words (any language)',l_anon:'Keep my name hidden (recommended)',b_send:'Send concern',h_mine:'Your concerns',foot:'Data: <a href="data/payouts.csv">data/payouts.csv</a> and <a href="data/takings.csv">data/takings.csv</a> (observed pilot data). Calculations run in this page; view source to check them.',home:'About Sciar Tips',
+  lastLine:(w,h,d)=>`Week ${w} (week starting ${d}). You worked ${h} hours.`,
+  lateLine:(a,h)=>`${a} of your ${h} hours in the 12 weeks were after 23:00. Under the current rule they earn no tip points.`,
+  sinceLine:(p1,p2)=>`Weeks 1–8: ${p1}% of your hours. Weeks 9–12: ${p2}%.`,
+  cmpHead:['','Weeks 1–8','Weeks 9–12'],cmpRows:['Average hours a week','Average tips a week','Tips per hour worked'],
+  how:(r,tp)=>`<p>Your points = <b>${r.pph}</b> points per hour × (<b>${r.h}</b> hours − <b>${r.a}</b> hours after 23:00) = <b>${r.pts}</b> points.</p><p>Your tips = week’s tip pool <b>${eur(r.pool)}</b> × your <b>${r.pts}</b> points ÷ everyone’s <b>${tp}</b> points = <b>${eur(r.pay)}</b>.</p><p>Points per hour by role: floor manager 1.5, server 1.0, bar 1.0, chef 0.5, kitchen porter 0.25.</p>`,
+  whatif:(act,alt)=>`<p>You were paid <b>${eur(act)}</b> in tips over 12 weeks. If hours after 23:00 earned points like any other hour (same pool, same points per hour), your share would have been <b>${eur(alt)}</b>, which is <b>${eur(alt-act)}</b> more.</p><p class="key">This is a what-if, not money you are owed. Changing the rule would move tips between colleagues; the pool would not grow.</p>`,
+  gHead:['Team','People','Tips per hour','Hours after 23:00'],gFoh:'Front of house (floor manager, servers, bar)',gKit:'Kitchen (chefs, kitchen porters)',gSrv:'Servers',gChef:'Chefs',
+  scLine:(d)=>`Paid to the house over 12 weeks from the 12.5% service charge on tables of six or more. It is not part of the tip pool. Service charge was added on ${d} of 72 opening days.`,
+  status:'Received by Sciar staff support (simulated, saved on this phone)',anonY:'Name hidden',anonN:'Name shared',del:'Delete',none:'You have not raised any concerns yet.',sent:'Saved. You can see it below.',noStore:'This browser blocks storage, so the concern is shown for this visit only.'},
+ pt:{title:'As minhas gorjetas',signedin:'Sessão: Rafael (S12) · demonstração',demo:'Versão de demonstração. Dados fictícios do piloto (Halloran’s, 14 ago a 5 nov 2028). Cada número é calculado no seu navegador a partir dos ficheiros indicados por baixo.',
+  observed:'Observado',inferred:'Inferido',h_last:'O seu último pagamento',h_hidden:'Horas sem gorjeta',h_weeks:'As suas horas, semana a semana',k_paid:'horas que dão pontos',k_late:'horas depois das 23:00 (sem pontos)',
+  h_how:'Como o seu pagamento foi calculado',h_whatif:'E se todas as horas dessem pontos?',h_groups:'Equipas comparadas (só grupos de 3 ou mais)',groups_note:'Funções com só 1 ou 2 pessoas (gerente de sala, bar, copeiro) nunca aparecem sozinhas, para não identificar ninguém. Os cozinheiros também não aparecem à parte: subtraí-los da Cozinha revelaria os copeiros.',
+  h_sc:'Taxa de serviço: não entra nas gorjetas',h_concern:'Fazer uma reclamação',who_sees:'<strong>Quem lê:</strong> a equipa de apoio da Sciar, não o seu patrão. O seu nome fica escondido, a menos que escolha mostrá-lo. O Halloran’s só vê o tema (nunca o nome nem as suas palavras) quando 3 ou mais pessoas levantam o mesmo tema.',
+  simulated:'Simulado: nesta demonstração a reclamação fica guardada só neste telemóvel. Nada é enviado.',l_topic:'Sobre o quê?',o_late:'Horas depois das 23:00 não contam',o_calc:'Não vejo como as gorjetas são calculadas',o_share:'A divisão entre funções',o_sc:'Taxa de serviço',o_other:'Outra coisa',
+  l_msg:'Escreva com as suas palavras (qualquer língua)',l_anon:'Esconder o meu nome (recomendado)',b_send:'Enviar',h_mine:'As suas reclamações',foot:'Dados: <a href="data/payouts.csv">data/payouts.csv</a> e <a href="data/takings.csv">data/takings.csv</a> (dados observados do piloto). Os cálculos são feitos nesta página.',home:'Sobre a Sciar Tips',
+  lastLine:(w,h,d)=>`Semana ${w} (começa a ${d}). Trabalhou ${h} horas.`,
+  lateLine:(a,h)=>`${a} das suas ${h} horas nas 12 semanas foram depois das 23:00. Com a regra atual não dão pontos.`,
+  sinceLine:(p1,p2)=>`Semanas 1–8: ${p1}% das suas horas. Semanas 9–12: ${p2}%.`,
+  cmpHead:['','Semanas 1–8','Semanas 9–12'],cmpRows:['Horas por semana (média)','Gorjetas por semana (média)','Gorjeta por hora'],
+  how:(r,tp)=>`<p>Os seus pontos = <b>${r.pph}</b> pontos por hora × (<b>${r.h}</b> horas − <b>${r.a}</b> horas depois das 23:00) = <b>${r.pts}</b> pontos.</p><p>As suas gorjetas = total da semana <b>${eur(r.pool)}</b> × os seus <b>${r.pts}</b> pontos ÷ os <b>${tp}</b> pontos de todos = <b>${eur(r.pay)}</b>.</p><p>Pontos por hora: gerente de sala 1,5, empregado de mesa 1,0, bar 1,0, cozinheiro 0,5, copeiro 0,25.</p>`,
+  whatif:(act,alt)=>`<p>Recebeu <b>${eur(act)}</b> em gorjetas em 12 semanas. Se as horas depois das 23:00 dessem pontos como as outras, a sua parte seria <b>${eur(alt)}</b>, ou seja, mais <b>${eur(alt-act)}</b>.</p><p class="key">Isto é uma simulação, não dinheiro em dívida. Mudar a regra muda a divisão entre colegas; o total não aumenta.</p>`,
+  gHead:['Equipa','Pessoas','Gorjeta por hora','Horas depois das 23:00'],gFoh:'Sala (gerente, empregados de mesa, bar)',gKit:'Cozinha (cozinheiros, copeiros)',gSrv:'Empregados de mesa',gChef:'Cozinheiros',
+  scLine:(d)=>`Pago à casa em 12 semanas pela taxa de serviço de 12,5% em mesas de seis ou mais. Não entra nas gorjetas. Houve taxa de serviço em ${d} de 72 dias.`,
+  status:'Recebida pelo apoio da Sciar (simulado, guardado neste telemóvel)',anonY:'Nome escondido',anonN:'Nome mostrado',del:'Apagar',none:'Ainda não fez nenhuma reclamação.',sent:'Guardado. Pode vê-lo em baixo.',noStore:'Este navegador bloqueia o armazenamento; a reclamação fica só nesta visita.'}
+};
+
+function eur(x){return '€'+x.toLocaleString(lang==='pt'?'pt-PT':'en-IE',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function num(x,d=1){return (+x).toLocaleString(lang==='pt'?'pt-PT':'en-IE',{maximumFractionDigits:d})}
+function parseCSV(t){const L=t.trim().split(/\r?\n/);const h=L[0].split(',');return L.slice(1).map(l=>{const v=l.split(',');const o={};h.forEach((k,i)=>o[k]=v[i]===undefined?'':v[i]);return o})}
+const sum=(a,f)=>a.reduce((s,r)=>s+f(r),0);
+const $=id=>document.getElementById(id);
+
+async function load(){
+  try{
+    const [p,t]=await Promise.all([fetch('data/payouts.csv').then(r=>{if(!r.ok)throw 0;return r.text()}),fetch('data/takings.csv').then(r=>{if(!r.ok)throw 0;return r.text()})]);
+    const P=parseCSV(p).map(r=>({...r,week:+r.week,hours:+r.hours,late:+r.hours_after_2300,pph:+r.points_per_hour,points:+r.points,pool:+r.week_pool_eur,pay:+r.tip_payout_eur}));
+    const Tk=parseCSV(t).map(r=>({...r,week:+r.week,sc:+r.service_charge_eur,tips:+r.card_tips_eur}));
+    D=compute(P,Tk);render();
+  }catch(e){$('err').hidden=false;$('err').textContent='Could not load data/payouts.csv or data/takings.csv. Open this page from its web address (GitHub Pages), not as a file.'}
+}
+
+function compute(P,Tk){
+  const mine=P.filter(r=>r.staff_id===ME).sort((a,b)=>a.week-b.week);
+  const last=mine[mine.length-1];
+  const ptsWeek=w=>sum(P.filter(r=>r.week===w),r=>r.points);
+  const per=(lo,hi)=>{const s=mine.filter(r=>r.week>=lo&&r.week<=hi);const h=sum(s,r=>r.hours),a=sum(s,r=>r.late),pay=sum(s,r=>r.pay);return{n:s.length,h,a,pay,pct:a/h*100,avgH:h/s.length,avgPay:pay/s.length,perH:pay/h}};
+  // what-if: late hours earn points, same pool and points per hour
+  let alt=0;
+  for(const r of mine){const wk=P.filter(x=>x.week===r.week);const tp=sum(wk,x=>x.pph*x.hours);alt+=r.pool*r.pph*r.hours/tp}
+  const grp=roles=>{const s=P.filter(r=>roles.includes(r.role));const ids=new Set(s.map(r=>r.staff_id));const h=sum(s,r=>r.hours);return{people:ids.size,perH:sum(s,r=>r.pay)/h,latePct:sum(s,r=>r.late)/h*100}};
+  const scRows=Tk.filter(r=>r.service_charge_paid_to==='house');
+  return{mine,last,lastPts:ptsWeek(last.week),all:per(1,12),a:per(1,8),b:per(9,12),act:sum(mine,r=>r.pay),alt,
+    groups:{foh:grp(['floor manager','server','bar']),kit:grp(['chef','kitchen porter']),srv:grp(['server'])},
+    sc:sum(scRows,r=>r.sc),scDays:scRows.length};
+}
+
+function render(){
+  const L=T[lang];
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-t]').forEach(el=>{const k=el.dataset.t;if(L[k]!==undefined)el.innerHTML=L[k]});
+  $('pt-note').hidden=lang!=='pt';
+  renderMine();
+  if(!D)return;
+  const {last}=D;
+  $('last-pay').textContent=eur(last.pay);
+  $('last-line').textContent=L.lastLine(last.week,num(last.hours),last.week_start);
+  $('src-last').textContent=`data/payouts.csv · staff_id = ${ME} · week = ${last.week} · column tip_payout_eur`;
+  $('late-pct').textContent=num(D.all.pct)+'%';
+  $('late-line').textContent=L.lateLine(num(D.all.a),num(D.all.h));
+  $('since-line').textContent=L.sinceLine(num(D.a.pct),num(D.b.pct));
+  $('src-hidden').textContent=`data/payouts.csv · staff_id = ${ME} · weeks 1–12 · sum(hours_after_2300) ÷ sum(hours)`;
+  const max=Math.max(...D.mine.map(r=>r.hours));
+  $('bars').innerHTML=D.mine.map(r=>`<div class="row"><span>W${r.week}</span><div class="bar" role="img" aria-label="Week ${r.week}: ${r.hours} hours, ${r.late} after 23:00"><span class="b-paid" style="width:${(r.hours-r.late)/max*100}%"></span><span class="b-late" style="width:${r.late/max*100}%"></span></div><span style="text-align:right">${eur(r.pay)}</span></div>`).join('');
+  const c=L.cmpHead,rw=L.cmpRows;
+  $('cmp').innerHTML=`<tr><th>${c[0]}</th><th class="n">${c[1]}</th><th class="n">${c[2]}</th></tr>
+   <tr><td>${rw[0]}</td><td class="n">${num(D.a.avgH)}</td><td class="n">${num(D.b.avgH)}</td></tr>
+   <tr><td>${rw[1]}</td><td class="n">${eur(D.a.avgPay)}</td><td class="n">${eur(D.b.avgPay)}</td></tr>
+   <tr><td>${rw[2]}</td><td class="n">${eur(D.a.perH)}</td><td class="n">${eur(D.b.perH)}</td></tr>`;
+  $('src-weeks').textContent=`data/payouts.csv · staff_id = ${ME} · columns hours, hours_after_2300, tip_payout_eur · weeks 1–8 vs 9–12, averages per week`;
+  $('how').innerHTML=L.how({pph:num(last.pph,2),h:num(last.hours),a:num(last.late),pts:num(last.points,2),pool:last.pool,pay:last.pay},num(D.lastPts,2));
+  $('src-how').textContent=`data/payouts.csv · week = ${last.week} · points = points_per_hour × (hours − hours_after_2300); total points = sum(points) for week ${last.week}`;
+  $('whatif').innerHTML=L.whatif(D.act,D.alt);
+  $('src-whatif').textContent=`data/payouts.csv · each week: week_pool_eur × (points_per_hour × hours) ÷ sum over everyone of (points_per_hour × hours) · staff_id = ${ME}, summed over weeks 1–12`;
+  const g=D.groups,h=L.gHead;
+  $('groups').innerHTML=`<tr><th>${h[0]}</th><th class="n">${h[1]}</th><th class="n">${h[2]}</th><th class="n">${h[3]}</th></tr>`+
+   [[L.gFoh,g.foh],[L.gKit,g.kit],[L.gSrv,g.srv]].map(([n,x])=>`<tr><td>${n}</td><td class="n">${x.people}</td><td class="n">${eur(x.perH)}</td><td class="n">${num(x.latePct)}%</td></tr>`).join('');
+  $('src-groups').textContent='data/payouts.csv · weeks 1–12 · by role group: sum(tip_payout_eur) ÷ sum(hours); sum(hours_after_2300) ÷ sum(hours); people = distinct staff_id';
+  $('sc-total').textContent=eur(D.sc);
+  $('sc-line').textContent=L.scLine(D.scDays);
+  $('src-sc').textContent='data/takings.csv · service_charge_paid_to = house · sum(service_charge_eur), weeks 1–12';
+}
+
+// ---- concerns (simulated: browser storage only) ----
+const KEY='sciar-concerns-'+ME;
+let memory=[];
+function getC(){try{const v=localStorage.getItem(KEY);return v?JSON.parse(v):memory}catch(e){return memory}}
+function putC(a){memory=a;try{localStorage.setItem(KEY,JSON.stringify(a));return true}catch(e){return false}}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderMine(){
+  const L=T[lang],a=getC();
+  $('mine').innerHTML=a.length?a.slice().reverse().map(c=>{
+    const opt=document.querySelector(`#topic option[value="${c.topic}"]`);
+    return `<li><b>${opt?opt.textContent:c.topic}</b>${c.msg?`<div>${esc(c.msg)}</div>`:''}<div class="meta">${new Date(c.at).toLocaleString(lang==='pt'?'pt-PT':'en-IE')} · ${c.anon?L.anonY:L.anonN}<br>${L.status}</div><button class="link" onclick="delC('${c.id}')">${L.del}</button></li>`}).join(''):`<li>${L.none}</li>`;
+}
+function delC(id){putC(getC().filter(c=>c.id!==id));renderMine()}
+$('cform').addEventListener('submit',e=>{
+  e.preventDefault();
+  const c={id:Date.now().toString(36),topic:$('topic').value,msg:$('msg').value.trim(),anon:$('anon').checked,at:new Date().toISOString()};
+  const ok=putC([...getC(),c]);
+  $('msg').value='';renderMine();
+  alert(ok?T[lang].sent:T[lang].noStore);
+});
+
+function setLang(l){lang=l;$('btn-en').setAttribute('aria-pressed',l==='en');$('btn-pt').setAttribute('aria-pressed',l==='pt');render()}
+render();load();
+</script>
+</body>
+</html>

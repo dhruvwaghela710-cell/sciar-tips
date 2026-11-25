@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sciar Tips · card tips paid to your team, every Monday</title>
+<style>
+  :root{--ink:#1a1a1a;--muted:#555;--accent:#0b5d4b;--bg:#fafaf7;--line:#d9d9d9}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:18px;line-height:1.55;color:var(--ink);background:var(--bg)}
+  .wrap{max-width:760px;margin:0 auto;padding:0 18px}
+  header{padding:18px 0;border-bottom:1px solid var(--line)}
+  .logo{font-weight:800;font-size:22px;color:var(--accent)}
+  .hero{padding:40px 0 20px}
+  .for{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);font-weight:700;margin:0}
+  h1{font-size:clamp(30px,6vw,44px);line-height:1.15;margin:8px 0 14px}
+  .lede{font-size:20px;color:#333;margin:0 0 20px}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0}
+  .btn{display:inline-block;padding:14px 20px;border-radius:8px;font-weight:700;text-decoration:none;min-height:52px}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.ghost{border:2px solid var(--accent);color:var(--accent)}
+  .claims{list-style:none;padding:0;margin:30px 0;display:grid;gap:14px}
+  .claims li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .claims b{display:block;font-size:20px;margin-bottom:4px}
+  sup a{color:var(--accent);text-decoration:none;font-weight:700}
+  .honest{background:#fff7e6;border-left:4px solid #8a4b00;padding:12px 14px;font-size:16px;margin:24px 0}
+  .notes{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding:16px 18px 40px}
+  .notes ol{padding-left:20px}
+  code{font-size:13px;background:#efefea;padding:1px 4px;border-radius:4px}
+  :focus-visible{outline:3px solid #f0a500;outline-offset:2px}
+</style>
+</head>
+<body>
+<header><div class="wrap"><span class="logo">Sciar Tips</span></div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="for">For restaurant owners</p>
+    <h1>Card tips shared with your team every week, with every share explained.</h1>
+    <p class="lede">You set the split rule. Sciar Tips works out each person's share from the card tips on your terminal, and each member of staff sees their own payout and how it was calculated, on their phone.</p>
+    <div class="cta">
+      <a class="btn primary" href="mailto:hello@sciar.example?subject=Sciar%20Tips%20for%20my%20restaurant">Talk to us: hello@sciar.example</a>
+      <a class="btn ghost" href="app.html">See the staff view (demo)</a>
+    </div>
+  </section>
+
+  <ul class="claims">
+    <li><b>Every card tip went into the staff pool.</b>In our 12-week pilot, &euro;31,754.13 of card tips came in and &euro;31,754.09 was paid out to staff. The 4 cents is rounding to the cent.<sup><a href="#n1">1</a></sup></li>
+    <li><b>Every person, every week, for 12 weeks.</b>In the pilot, a tip payout was worked out for every member of staff in each of the 12 weeks from 14 August to 5 November 2028.<sup><a href="#n2">2</a></sup></li>
+    <li><b>Staff can see how their share is worked out, and raise a concern.</b>Our alpha staff view shows each person their own points, hours and payout, and lets them raise a concern from their phone.<sup><a href="#n3">3</a></sup></li>
+  </ul>
+
+  <p class="honest"><strong>Where we are:</strong> Sciar Tips is an alpha. It has been piloted with one restaurant in Dublin 7. In the alpha, the concern feature is simulated: it saves on the person's own phone and sends nothing.</p>
+</main>
+
+<footer class="wrap notes">
+  <p><strong>Sources</strong> (all from the Sciar pilot pack; the case is fictional and set in 2028)</p>
+  <ol>
+    <li id="n1">Card tips in: sum of <code>card_tips_eur</code>, <a href="data/takings.csv">data/takings.csv</a>, weeks 1&ndash;12. Paid out: sum of <code>tip_payout_eur</code>, <a href="data/payouts.csv">data/payouts.csv</a>, weeks 1&ndash;12. Card tips only: the separate service charge is not part of the tip pool.</li>
+    <li id="n2"><a href="data/payouts.csv">data/payouts.csv</a>: a <code>tip_payout_eur</code> row for every staff member in each of weeks 1&ndash;12 (<code>week_start</code> 2028-08-14 to 2028-10-30). Pilot dates from the pack README.</li>
+    <li id="n3">The staff view at <a href="app.html">app.html</a> does this today, using the pilot data.</li>
+  </ol>
+</footer>
+</body>
+</html>
