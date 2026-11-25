@@ -1,7 +1,8 @@
 # Sciar Tips: CA2
 
-**Live site (GitHub Pages):** https://YOUR-USERNAME.github.io/YOUR-REPO/
-**Repository:** https://github.com/YOUR-USERNAME/YOUR-REPO
+**Live site (GitHub Pages):** https://dhruvwaghela710-cell.github.io/sciar-tips/index.html
+
+**Repository:** https://github.com/dhruvwaghela710-cell/sciar-tips
 
 **My question:** Who carries the late-night work that Halloran's split rule pays nothing for, and can the least powerful person on staff say so safely?
 
